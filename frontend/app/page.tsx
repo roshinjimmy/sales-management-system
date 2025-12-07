@@ -1,4 +1,7 @@
+"use client";
+
 import FilterDropdown from "@/components/FilterDropdown";
+import SearchBar from "@/components/SearchBar";
 
 export default function Home() {
   return (
@@ -44,11 +47,7 @@ export default function Home() {
           </div>
 
           <div className="flex items-center justify-end gap-2">
-            <input
-              type="text"
-              placeholder="Name, Phone No."
-              className="px-4 py-2 rounded-md border shadow bg-white text-sm w-60"
-            />
+            <SearchBar onSearch={(value) => console.log("Searching:", value)} />
 
             <select className="px-4 py-2 rounded-md border shadow bg-white text-sm">
               <option>Sort by: Customer Name (A–Z)</option>
