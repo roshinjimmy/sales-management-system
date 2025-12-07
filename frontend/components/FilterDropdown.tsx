@@ -38,21 +38,27 @@ export default function FilterDropdown({
         onClick={() => setOpen((prev) => !prev)}
         className="px-4 py-2 bg-white border rounded-md shadow text-sm hover:bg-gray-50 flex items-center gap-2"
       >
-        {label}
+        {label} {selected.length > 0 ? `(${selected.length})` : ""}
         <span className="text-gray-500">▾</span>
       </button>
 
       {open && (
-        <div className="absolute mt-2 w-48 bg-white border rounded-md shadow-lg z-20 max-h-60 overflow-auto">
+        <div className="absolute mt-2 w-56 bg-white border rounded-md shadow-lg z-20 max-h-60 overflow-auto">
           {options.map((option) => (
             <div
               key={option}
               onClick={() => toggleOption(option)}
-              className={
-                `px-4 py-2 cursor-pointer text-sm hover:bg-gray-100 ${selected.includes(option)? "bg-gray-200 font-medium":""}`
-              }
+              className={`px-4 py-2 cursor-pointer text-sm flex items-center gap-2 hover:bg-gray-100 ${
+                selected.includes(option) ? "bg-gray-200 font-medium" : ""
+              }`}
             >
-              {option}
+              <input
+                type="checkbox"
+                checked={selected.includes(option)}
+                readOnly
+                className="w-4 h-4"
+              />
+              <span>{option}</span>
             </div>
           ))}
         </div>

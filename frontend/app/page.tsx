@@ -17,14 +17,14 @@ export default function Home() {
     { key: "customerName", label: "Customer Name" },
     { key: "phone", label: "Phone Number" },
     { key: "gender", label: "Gender" },
-    { key: "age", label: "Age" },
+    { key: "age", label: "Age", align: "right" },
     { key: "category", label: "Product Category" },
-    { key: "quantity", label: "Quantity" },
-    { key: "amount", label: "Total Amount" },
+    { key: "quantity", label: "Quantity", align: "right" },
+    { key: "amount", label: "Total Amount", align: "right" },
     { key: "region", label: "Customer Region" },
     { key: "productId", label: "Product ID" },
     { key: "employee", label: "Employee Name" },
-  ];
+  ] as const;
 
   const mockData = [
     {
