@@ -3,8 +3,43 @@
 import FilterDropdown from "@/components/FilterDropdown";
 import SearchBar from "@/components/SearchBar";
 import SortingDropdown from "@/components/SortingDropdown";
+import TransactionTable from "@/components/TransactionTable";
 
 export default function Home() {
+  const columns = [
+    { key: "transactionId", label: "Transaction ID" },
+    { key: "date", label: "Date" },
+    { key: "customerId", label: "Customer ID" },
+    { key: "customerName", label: "Customer Name" },
+    { key: "phone", label: "Phone Number" },
+    { key: "gender", label: "Gender" },
+    { key: "age", label: "Age" },
+    { key: "category", label: "Product Category" },
+    { key: "quantity", label: "Quantity" },
+    { key: "amount", label: "Total Amount" },
+    { key: "region", label: "Customer Region" },
+    { key: "productId", label: "Product ID" },
+    { key: "employee", label: "Employee Name" },
+  ];
+
+  const mockData = [
+    {
+      transactionId: "1234567",
+      date: "2023-09-26",
+      customerId: "CUST12016",
+      customerName: "Neha Yadav",
+      phone: "+91 9123456789",
+      gender: "Female",
+      age: 25,
+      category: "Clothing",
+      quantity: 1,
+      amount: "₹1,000",
+      region: "South",
+      productId: "PROD0001",
+      employee: "Harsh Agrawal",
+    },
+  ];
+
   return (
     <main className="min-h-screen w-full bg-gray-100 text-black p-6">
       <div className="max-w-7xl mx-auto flex flex-col gap-6">
@@ -77,42 +112,7 @@ export default function Home() {
         </section>
 
         <section className="bg-white rounded-md shadow p-4 overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b">
-                <th className="py-2">Transaction ID</th>
-                <th className="py-2">Date</th>
-                <th className="py-2">Customer ID</th>
-                <th className="py-2">Customer name</th>
-                <th className="py-2">Phone Number</th>
-                <th className="py-2">Gender</th>
-                <th className="py-2">Age</th>
-                <th className="py-2">Product Category</th>
-                <th className="py-2">Quantity</th>
-                <th className="py-2">Total Amount</th>
-                <th className="py-2">Customer Region</th>
-                <th className="py-2">Product ID</th>
-                <th className="py-2">Employee name</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b">
-                <td className="py-2">1234567</td>
-                <td className="py-2">2023-09-26</td>
-                <td className="py-2">CUST12016</td>
-                <td className="py-2">Neha Yadav</td>
-                <td className="py-2">+91 9123456789</td>
-                <td className="py-2">Female</td>
-                <td className="py-2">25</td>
-                <td className="py-2">Clothing</td>
-                <td className="py-2">01</td>
-                <td className="py-2">₹1,000</td>
-                <td className="py-2">South</td>
-                <td className="py-2">PROD0001</td>
-                <td className="py-2">Harsh Agrawal</td>
-              </tr>
-            </tbody>
-          </table>
+          <TransactionTable columns={columns} data={mockData} />
         </section>
 
         <section className="flex justify-center items-center mt-4 gap-2">
