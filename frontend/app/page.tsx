@@ -2,6 +2,7 @@
 
 import FilterDropdown from "@/components/FilterDropdown";
 import SearchBar from "@/components/SearchBar";
+import SortingDropdown from "@/components/SortingDropdown";
 
 export default function Home() {
   return (
@@ -49,11 +50,14 @@ export default function Home() {
           <div className="flex items-center justify-end gap-2">
             <SearchBar onSearch={(value) => console.log("Searching:", value)} />
 
-            <select className="px-4 py-2 rounded-md border shadow bg-white text-sm">
-              <option>Sort by: Customer Name (A–Z)</option>
-              <option>Sort by: Date (Newest)</option>
-              <option>Sort by: Quantity</option>
-            </select>
+            <SortingDropdown
+              options={[
+                { label: "Customer Name (A–Z)", value: "name_asc" },
+                { label: "Date (Newest)", value: "date_desc" },
+                { label: "Quantity", value: "qty" },
+              ]}
+              onChange={(value) => console.log("Sort:", value)}
+            />
           </div>
         </section>
 
