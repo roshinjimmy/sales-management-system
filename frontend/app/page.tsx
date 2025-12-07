@@ -7,6 +7,7 @@ import SearchBar from "@/components/SearchBar";
 import SortingDropdown from "@/components/SortingDropdown";
 import TransactionTable from "@/components/TransactionTable";
 import Pagination from "@/components/Pagination";
+import SummaryCard from "@/components/SummaryCard";
 
 export default function Home() {
   const columns = [
@@ -102,18 +103,17 @@ export default function Home() {
         </section>
 
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-md shadow">
-            <p className="text-gray-400 text-sm">Total units sold</p>
-            <p className="text-2xl font-semibold">10</p>
-          </div>
-          <div className="bg-white p-4 rounded-md shadow">
-            <p className="text-gray-400 text-sm">Total Amount</p>
-            <p className="text-2xl font-semibold">$89,000 (19 SRs)</p>
-          </div>
-          <div className="bg-white p-4 rounded-md shadow">
-            <p className="text-gray-400 text-sm">Total Discount</p>
-            <p className="text-2xl font-semibold">$15,000 (45 SRs)</p>
-          </div>
+          <SummaryCard title="Total units sold" value="10" />
+          <SummaryCard
+            title="Total Amount"
+            value="₹89,000"
+            subtext="(19 SRs)"
+          />
+          <SummaryCard
+            title="Total Discount"
+            value="₹15,000"
+            subtext="(45 SRs)"
+          />
         </section>
 
         <TransactionTable columns={columns} data={mockData} />
