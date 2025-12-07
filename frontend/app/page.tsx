@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
+
 import FilterDropdown from "@/components/FilterDropdown";
 import SearchBar from "@/components/SearchBar";
 import SortingDropdown from "@/components/SortingDropdown";
 import TransactionTable from "@/components/TransactionTable";
+import Pagination from "@/components/Pagination";
 
 export default function Home() {
   const columns = [
@@ -39,6 +42,8 @@ export default function Home() {
       employee: "Harsh Agrawal",
     },
   ];
+
+  const [page, setPage] = useState(1);
 
   return (
     <main className="min-h-screen w-full bg-gray-100 text-black p-6">
@@ -111,22 +116,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-white rounded-md shadow p-4 overflow-x-auto">
-          <TransactionTable columns={columns} data={mockData} />
-        </section>
+        <TransactionTable columns={columns} data={mockData} />
 
-        <section className="flex justify-center items-center mt-4 gap-2">
-          {[1, 2, 3, 4, 5, 6].map((num) => (
-            <button
-              key={num}
-              className={`px-3 py-1 rounded-md ${
-                num === 1 ? "bg-black text-white" : "bg-gray-200"
-              }`}
-            >
-              {num}
-            </button>
-          ))}
-        </section>
+        <Pagination
+          currentPage={page}
+          totalPages={6}
+          onPageChange={(p) => setPage(p)}
+        />
       </div>
     </main>
   );
