@@ -25,11 +25,18 @@ export default function FilterDropdown({
         : [...selected, option];
       setSelected(newSelected);
       onChange?.(newSelected);
-    } else {
-      setSelected([option]);
-      onChange?.(option);
-      setOpen(false);
+      return;
     }
+
+    if (selected[0] === option) {
+      setSelected([]);
+      onChange?.("");
+      setOpen(false);
+      return;
+    }
+    setSelected([option]);
+    onChange?.(option);
+    setOpen(false);
   };
 
   return (

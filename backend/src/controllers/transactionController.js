@@ -6,12 +6,84 @@ exports.getTransactions = async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const offset = (page - 1) * limit;
 
-    const result = await pool.query(
-      `SELECT * FROM transactions 
-       ORDER BY id ASC
-       LIMIT $1 OFFSET $2`,
-      [limit, offset]
-    );
+    const region = req.query.region?.split(",");
+    const gender = req.query.gender?.split(",");
+    const category = req.query.category?.split(",");
+    const payment = req.query.payment?.split(",");
+    const tags = req.query.tags?.split(",");
+    const ageRange = req.query.ageRange;
+    const dateRange = req.query.date;
+
+    let conditions = [];
+    let params = [];
+    let paramIndex = 1;
+
+    if (region && region.length > 0) {
+      conditions.push(`customer_region = ANY($${paramIndex})`);
+      params.push(region);
+      paramIndex++;
+    }
+
+    if (gender && gender.length > 0) {
+      conditions.push(`gender = ANY($${paramIndex})`);
+      params.push(gender);
+      paramIndex++;
+    }
+
+    if (category && category.length > 0) {
+      conditions.push(`product_category = ANY($${paramIndex})`);
+      params.push(category);
+      paramIndex++;
+    }
+
+    if (payment && payment.length > 0) {
+      conditions.push(`payment_method = ANY($${paramIndex})`);
+      params.push(payment);
+      paramIndex++;
+    }
+
+    if (tags && tags.length > 0) {
+      conditions.push(`tags ILIKE $${paramIndex}`);
+      params.push(`%${tags.join("%")}%`);
+      paramIndex++;
+    }
+
+    if (ageRange) {
+      const [minAge, maxAge] = ageRange.split("-").map(Number);
+      conditions.push(`age BETWEEN $${paramIndex} AND $${paramIndex + 1}`);
+      params.push(minAge, maxAge);
+      paramIndex += 2;
+    }
+
+    if (dateRange === "Last 7 Days") {
+      conditions.push(`date >= NOW() - INTERVAL '7 days'`);
+    }
+
+    if (dateRange === "Last 30 Days") {
+      conditions.push(`date >= NOW() - INTERVAL '30 days'`);
+    }
+
+    if (dateRange === "This Year") {
+      conditions.push(`EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM NOW())`);
+    }
+
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+    const limitParam = paramIndex++;
+    const offsetParam = paramIndex++;
+
+    const dataQuery = `
+      SELECT *
+      FROM transactions
+      ${whereClause}
+      ORDER BY transaction_id::bigint ASC
+      LIMIT $${limitParam} OFFSET $${offsetParam}
+    `;
+
+    params.push(limit, offset);
+
+    const result = await pool.query(dataQuery, params);
 
     const mapped = result.rows.map((row) => ({
       transactionId: row.transaction_id,
@@ -29,11 +101,13 @@ exports.getTransactions = async (req, res) => {
       employee: row.employee_name,
     }));
 
-    const totalRes = await pool.query("SELECT COUNT(*) FROM transactions");
-    const totalRows = parseInt(totalRes.rows[0].count);
-    const totalPages = Math.ceil(totalRows / limit);
+    const countParams = params.slice(0, limitParam - 1);
+    const countQuery = `SELECT COUNT(*) FROM transactions ${whereClause}`;
 
-    res.json({ data: mapped, totalPages });
+    const countResult = await pool.query(countQuery, countParams);
+    const totalRows = parseInt(countResult.rows[0].count);
+
+    res.json({ data: mapped, totalPages: Math.ceil(totalRows / limit) });
   } catch (err) {
     console.error("Query error:", err);
     res.status(500).json({ error: "Server error" });

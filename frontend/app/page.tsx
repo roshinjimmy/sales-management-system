@@ -26,29 +26,68 @@ export default function Home() {
     { key: "employee", label: "Employee Name" },
   ] as const;
 
+  const [filters, setFilters] = useState({
+    region: [],
+    gender: [],
+    ageRange: "",
+    category: [],
+    tags: [],
+    payment: [],
+    date: "",
+  });
+
   const [transactions, setTransactions] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
 
-  const fetchTransactions = async (pageNum = 1) => {
+  const fetchTransactions = async (page = 1) => {
     try {
       const API = process.env.NEXT_PUBLIC_API_URL;
 
-      const res = await fetch(
-        `${API}/api/transactions?page=${pageNum}&limit=20`
-      );
-      const json = await res.json();
+      const params = new URLSearchParams();
+      params.append("page", String(page));
+      params.append("limit", "20");
 
-      setTransactions(json.data || []);
+      if (filters.region.length)
+        params.append("region", filters.region.join(","));
+
+      if (filters.gender.length)
+        params.append("gender", filters.gender.join(","));
+
+      if (filters.category.length)
+        params.append("category", filters.category.join(","));
+
+      if (filters.payment.length)
+        params.append("payment", filters.payment.join(","));
+
+      if (filters.tags.length) params.append("tags", filters.tags.join(","));
+
+      if (filters.ageRange) params.append("ageRange", filters.ageRange);
+
+      if (filters.date) params.append("date", filters.date);
+
+      const res = await fetch(`${API}/api/transactions?${params.toString()}`);
+
+      const json = await res.json();
+      setTransactions(Array.isArray(json.data) ? json.data : []);
       setTotalPages(json.totalPages || 1);
     } catch (err) {
       console.error("Fetch error:", err);
     }
   };
 
+  const updateFilter = (key: string, value: any) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+
+    setPage(1);
+  };
+
   useEffect(() => {
     fetchTransactions(page);
-  }, [page]);
+  }, [page, filters]);
 
   return (
     <main className="min-h-screen w-full bg-gray-100 text-black p-6">
@@ -59,36 +98,43 @@ export default function Home() {
               label="Customer Region"
               options={["North", "South", "East", "West"]}
               multi={true}
+              onChange={(values) => updateFilter("region", values)}
             />
             <FilterDropdown
               label="Gender"
               options={["Male", "Female", "Other"]}
               multi={false}
+              onChange={(value) => updateFilter("gender", value ? [value] : [])}
             />
             <FilterDropdown
               label="Age Range"
               options={["18-25", "26-35", "36-45", "46-60", "60+"]}
               multi={false}
+              onChange={(value) => updateFilter("ageRange", value)}
             />
             <FilterDropdown
               label="Product Category"
               options={["Electronics", "Clothing", "Groceries", "Accessories"]}
               multi={true}
+              onChange={(values) => updateFilter("category", values)}
             />
             <FilterDropdown
               label="Tags"
               options={["New", "Sale", "Popular", "Limited"]}
               multi={true}
+              onChange={(values) => updateFilter("tags", values)}
             />
             <FilterDropdown
               label="Payment Method"
               options={["Cash", "Credit Card", "UPI", "Net Banking"]}
               multi={true}
+              onChange={(values) => updateFilter("payment", values)}
             />
             <FilterDropdown
               label="Date"
               options={["Today", "Last 7 Days", "Last 30 Days", "This Year"]}
               multi={false}
+              onChange={(value) => updateFilter("date", value)}
             />
           </div>
 
