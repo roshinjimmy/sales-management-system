@@ -16,8 +16,8 @@ export default function TransactionTable({
   data,
 }: TransactionTableProps) {
   return (
-    <div className="bg-white rounded-md shadow overflow-x-auto">
-      <table className="w-full text-left text-sm">
+    <div className="bg-white rounded-md shadow overflow-x-auto w-full">
+      <table className="min-w-[1500px] w-full text-left text-sm">
         <thead className="sticky top-0 bg-gray-50 z-10">
           <tr className="border-b bg-gray-50">
             {columns.map((col) => (
@@ -52,9 +52,10 @@ export default function TransactionTable({
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={`py-2 px-3 whitespace-nowrap ${
+                    className={`py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px] ${
                       col.align === "right" ? "text-right" : "text-left"
                     }`}
+                    title={row[col.key]}
                   >
                     {row[col.key]}
                   </td>

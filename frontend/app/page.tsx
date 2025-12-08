@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import FilterDropdown from "@/components/FilterDropdown";
 import SearchBar from "@/components/SearchBar";
@@ -26,25 +26,29 @@ export default function Home() {
     { key: "employee", label: "Employee Name" },
   ] as const;
 
-  const mockData = [
-    {
-      transactionId: "1234567",
-      date: "2023-09-26",
-      customerId: "CUST12016",
-      customerName: "Neha Yadav",
-      phone: "+91 9123456789",
-      gender: "Female",
-      age: 25,
-      category: "Clothing",
-      quantity: 1,
-      amount: "₹1,000",
-      region: "South",
-      productId: "PROD0001",
-      employee: "Harsh Agrawal",
-    },
-  ];
-
+  const [transactions, setTransactions] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
+
+  const fetchTransactions = async (pageNum = 1) => {
+    try {
+      const API = process.env.NEXT_PUBLIC_API_URL;
+
+      const res = await fetch(
+        `${API}/api/transactions?page=${pageNum}&limit=20`
+      );
+      const json = await res.json();
+
+      setTransactions(json.data || []);
+      setTotalPages(json.totalPages || 1);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactions(page);
+  }, [page]);
 
   return (
     <main className="min-h-screen w-full bg-gray-100 text-black p-6">
@@ -116,11 +120,11 @@ export default function Home() {
           />
         </section>
 
-        <TransactionTable columns={columns} data={mockData} />
+        <TransactionTable columns={columns} data={transactions} />
 
         <Pagination
           currentPage={page}
-          totalPages={6}
+          totalPages={totalPages}
           onPageChange={(p) => setPage(p)}
         />
       </div>
