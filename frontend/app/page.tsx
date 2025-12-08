@@ -9,6 +9,17 @@ import TransactionTable from "@/components/TransactionTable";
 import Pagination from "@/components/Pagination";
 import SummaryCard from "@/components/SummaryCard";
 
+type FilterState = {
+  region: string[];
+  gender: string[];
+  ageRange: string;
+  category: string[];
+  tags: string[];
+  payment: string[];
+  date: string;
+  search: string;
+};
+
 export default function Home() {
   const columns = [
     { key: "transactionId", label: "Transaction ID" },
@@ -26,7 +37,7 @@ export default function Home() {
     { key: "employee", label: "Employee Name" },
   ] as const;
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<FilterState>({
     region: [],
     gender: [],
     ageRange: "",
@@ -34,6 +45,7 @@ export default function Home() {
     tags: [],
     payment: [],
     date: "",
+    search: "",
   });
 
   const [transactions, setTransactions] = useState([]);
@@ -66,6 +78,8 @@ export default function Home() {
 
       if (filters.date) params.append("date", filters.date);
 
+      if (filters.search) params.append("search", filters.search);
+
       const res = await fetch(`${API}/api/transactions?${params.toString()}`);
 
       const json = await res.json();
@@ -76,11 +90,20 @@ export default function Home() {
     }
   };
 
-  const updateFilter = (key: string, value: any) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const updateFilter = (
+    key: keyof FilterState,
+    value: FilterState[keyof FilterState]
+  ) => {
+    setFilters((prev) => {
+      if (JSON.stringify(prev[key]) === JSON.stringify(value)) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
 
     setPage(1);
   };
@@ -104,7 +127,9 @@ export default function Home() {
               label="Gender"
               options={["Male", "Female", "Other"]}
               multi={false}
-              onChange={(value) => updateFilter("gender", value ? [value] : [])}
+              onChange={(value) =>
+                updateFilter("gender", value ? [value as string] : [])
+              }
             />
             <FilterDropdown
               label="Age Range"
@@ -139,7 +164,11 @@ export default function Home() {
           </div>
 
           <div className="flex items-center justify-end gap-2">
-            <SearchBar onSearch={(value) => console.log("Searching:", value)} />
+            <SearchBar
+              onSearch={(value) => {
+                updateFilter("search", value);
+              }}
+            />
 
             <SortingDropdown
               options={[

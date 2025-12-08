@@ -13,38 +13,39 @@ exports.getTransactions = async (req, res) => {
     const tags = req.query.tags?.split(",");
     const ageRange = req.query.ageRange;
     const dateRange = req.query.date;
+    const search = req.query.search;
 
     let conditions = [];
     let params = [];
     let paramIndex = 1;
 
-    if (region && region.length > 0) {
+    if (region?.length) {
       conditions.push(`customer_region = ANY($${paramIndex})`);
       params.push(region);
       paramIndex++;
     }
 
-    if (gender && gender.length > 0) {
+    if (gender?.length) {
       conditions.push(`gender = ANY($${paramIndex})`);
       params.push(gender);
       paramIndex++;
     }
 
-    if (category && category.length > 0) {
+    if (category?.length) {
       conditions.push(`product_category = ANY($${paramIndex})`);
       params.push(category);
       paramIndex++;
     }
 
-    if (payment && payment.length > 0) {
+    if (payment?.length) {
       conditions.push(`payment_method = ANY($${paramIndex})`);
       params.push(payment);
       paramIndex++;
     }
 
-    if (tags && tags.length > 0) {
+    if (tags?.length) {
       conditions.push(`tags ILIKE $${paramIndex}`);
-      params.push(`%${tags.join("%")}%`);
+      params.push(`%${tags.join(",")}%`);
       paramIndex++;
     }
 
@@ -65,6 +66,23 @@ exports.getTransactions = async (req, res) => {
 
     if (dateRange === "This Year") {
       conditions.push(`EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM NOW())`);
+    }
+
+    if (search && search.trim() !== "") {
+      conditions.push(`
+        (
+          transaction_id ILIKE $${paramIndex} OR
+          customer_name ILIKE $${paramIndex} OR
+          phone_number ILIKE $${paramIndex} OR
+          product_name ILIKE $${paramIndex} OR
+          product_category ILIKE $${paramIndex} OR
+          tags ILIKE $${paramIndex} OR
+          employee_name ILIKE $${paramIndex}
+        )
+      `);
+
+      params.push(`%${search}%`);
+      paramIndex++;
     }
 
     const whereClause =
@@ -101,9 +119,9 @@ exports.getTransactions = async (req, res) => {
       employee: row.employee_name,
     }));
 
-    const countParams = params.slice(0, limitParam - 1);
-    const countQuery = `SELECT COUNT(*) FROM transactions ${whereClause}`;
+    const countParams = params.slice(0, params.length - 2);
 
+    const countQuery = `SELECT COUNT(*) FROM transactions ${whereClause}`;
     const countResult = await pool.query(countQuery, countParams);
     const totalRows = parseInt(countResult.rows[0].count);
 

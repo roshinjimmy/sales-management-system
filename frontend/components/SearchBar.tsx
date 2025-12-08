@@ -11,12 +11,18 @@ export default function SearchBar({ onSearch, delay = 400 }: SearchBarProps) {
   const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
+    if (inputValue === "") {
+      onSearch("");
+    }
+  }, [inputValue, onSearch]);
+
+  useEffect(() => {
     const handler = setTimeout(() => {
       onSearch(inputValue);
     }, delay);
 
     return () => clearTimeout(handler);
-  }, [inputValue, delay, onSearch]);
+  }, [inputValue]);
 
   return (
     <div className="flex items-center bg-white border rounded-md shadow px-3 py-2 w-60 gap-2">
