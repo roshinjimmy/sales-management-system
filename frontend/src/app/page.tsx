@@ -9,6 +9,7 @@ import TransactionTable from "@/src/components/TransactionTable";
 import Pagination from "@/src/components/Pagination";
 import SummaryCard from "@/src/components/SummaryCard";
 import Loader from "@/src/components/Loader";
+import Sidebar from "@/src/components/Sidebar";
 
 type FilterState = {
   region: string[];
@@ -181,8 +182,10 @@ export default function Home() {
   }, [page, filters]);
 
   return (
-    <main className="min-h-screen w-full bg-gray-100 text-black p-6">
-      <div className="max-w-7xl mx-auto flex flex-col gap-6">
+    <main className="min-h-screen w-full bg-gray-100 text-black">
+      <div className="flex h-screen w-full gap-0">
+        <Sidebar />
+        <div className="flex-1 px-8 py-6 flex flex-col gap-6 overflow-hidden">
         <section className="w-full flex flex-col gap-4">
           <div className="flex flex-wrap gap-2">
             <FilterDropdown
@@ -278,6 +281,7 @@ export default function Home() {
           totalPages={totalPages}
           onPageChange={(p) => setPage(p)}
         />
+        </div>
       </div>
     </main>
   );
