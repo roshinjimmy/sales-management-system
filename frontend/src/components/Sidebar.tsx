@@ -23,8 +23,8 @@ const menuSections = [
 
 export default function Sidebar() {
   return (
-    <aside className="flex h-full min-h-screen w-56 flex-col border-r bg-[#f5f5f6]">
-      <div className="flex items-center justify-between border-b bg-white px-4 py-3">
+    <aside className="flex h-full min-h-screen w-56 flex-col bg-[#f5f5f6] px-4 pt-3">
+      <div className="mb-3 flex items-center justify-between rounded-md bg-white px-3 py-2 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black text-white text-sm font-semibold">
             V
@@ -37,7 +37,7 @@ export default function Sidebar() {
         <IoChevronDownOutline className="text-gray-400" size={16} />
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-4 py-3 text-[13px] text-gray-700">
+      <nav className="flex-1 overflow-y-auto pb-3 text-[13px] text-gray-700">
         <button
           type="button"
           className="mb-1.5 flex w-full items-center gap-2.5 rounded-md px-1 py-1 text-left text-[12px] font-medium text-gray-800 hover:bg-gray-100"

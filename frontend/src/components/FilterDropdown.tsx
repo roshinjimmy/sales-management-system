@@ -43,7 +43,7 @@ export default function FilterDropdown({
     <div className="relative inline-block text-left">
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="px-4 py-2 bg-white border rounded-md shadow text-sm hover:bg-gray-50 flex items-center gap-2"
+        className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded-md text-sm hover:bg-gray-50 flex items-center gap-2"
       >
         {label} {selected.length > 0 ? `(${selected.length})` : ""}
         <span className="text-gray-500">▾</span>

@@ -43,14 +43,14 @@ export default function SortingDropdown({
     <div className="relative inline-block text-left">
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="px-4 py-2 bg-white border rounded-md shadow text-sm hover:bg-gray-50 flex items-center gap-2 whitespace-nowrap"
+        className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded-md text-sm hover:bg-gray-50 flex items-center gap-2 whitespace-nowrap"
       >
         {label} : {selectedLabel}
         <span className="text-gray-500">▾</span>
       </button>
 
       {open && (
-        <div className="absolute mt-2 w-56 bg-white border rounded-md shadow-lg z-20 max-h-60 overflow-auto">
+        <div className="absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-20 max-h-60 overflow-auto">
           {options.map((option) => (
             <div
               key={option.value}

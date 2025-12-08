@@ -182,12 +182,26 @@ export default function Home() {
   }, [page, filters]);
 
   return (
-    <main className="min-h-screen w-full bg-gray-100 text-black">
+    <main className="min-h-screen w-full bg-white text-black">
       <div className="flex h-screen w-full gap-0">
         <Sidebar />
-        <div className="flex-1 px-8 py-6 flex flex-col gap-6 overflow-hidden">
-        <section className="w-full flex flex-col gap-4">
-          <div className="flex flex-wrap gap-2">
+        <div className="flex-1 px-5 py-2 flex flex-col gap-6 overflow-hidden">
+          <header className="mb-0 flex items-center justify-between gap-4 pr-2">
+            <h1 className="text-l font-semibold text-gray-800">
+              Sales Management System
+            </h1>
+            <div className="w-full max-w-md flex justify-end">
+              <SearchBar
+                onSearch={(value) => {
+                  updateFilter("search", value);
+                }}
+              />
+            </div>
+          </header>
+
+          <section className="w-full flex flex-col gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap gap-1.5">
             <FilterDropdown
               label="Customer Region"
               options={["North", "South", "East", "West"]}
@@ -232,16 +246,10 @@ export default function Home() {
               multi={false}
               onChange={(value) => updateFilter("date", value)}
             />
-          </div>
+            </div>
 
-          <div className="flex items-center justify-end gap-2">
-            <SearchBar
-              onSearch={(value) => {
-                updateFilter("search", value);
-              }}
-            />
-
-            <SortingDropdown
+            <div className="flex items-center gap-2">
+              <SortingDropdown
               options={[
                 { label: "Customer Name", value: "customer_name" },
                 { label: "Date", value: "date" },
@@ -252,10 +260,11 @@ export default function Home() {
               sortOrder={filters.sortOrder}
               onChange={handleSort}
             />
+            </div>
           </div>
         </section>
 
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-fit">
           <SummaryCard
             title="Total Units Sold"
             value={stats.total_units.toLocaleString()}
