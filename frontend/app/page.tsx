@@ -56,6 +56,12 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
 
+  const [stats, setStats] = useState({
+    total_units: 0,
+    total_amount: 0,
+    total_discount: 0,
+  });
+
   const handleSort = (field: string) => {
     if (!field) {
       updateFilter("sortBy", "");
@@ -109,6 +115,43 @@ export default function Home() {
     }
   };
 
+  const fetchStats = async () => {
+    try {
+      const API = process.env.NEXT_PUBLIC_API_URL;
+      const params = new URLSearchParams();
+
+      if (filters.region.length)
+        params.append("region", filters.region.join(","));
+
+      if (filters.gender.length)
+        params.append("gender", filters.gender.join(","));
+
+      if (filters.category.length)
+        params.append("category", filters.category.join(","));
+
+      if (filters.payment.length)
+        params.append("payment", filters.payment.join(","));
+
+      if (filters.tags.length) params.append("tags", filters.tags.join(","));
+      if (filters.ageRange) params.append("ageRange", filters.ageRange);
+      if (filters.date) params.append("date", filters.date);
+      if (filters.search) params.append("search", filters.search);
+
+      const res = await fetch(
+        `${API}/api/transactions/stats?${params.toString()}`
+      );
+      const json = await res.json();
+
+      setStats({
+        total_units: Number(json.total_units || 0),
+        total_amount: Number(json.total_amount || 0),
+        total_discount: Number(json.total_discount || 0),
+      });
+    } catch (err) {
+      console.error("Stats Fetch Error:", err);
+    }
+  };
+
   const updateFilter = (
     key: keyof FilterState,
     value: FilterState[keyof FilterState]
@@ -129,6 +172,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchTransactions(page);
+    fetchStats();
   }, [page, filters]);
 
   return (
@@ -204,16 +248,17 @@ export default function Home() {
         </section>
 
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <SummaryCard title="Total units sold" value="10" />
+          <SummaryCard
+            title="Total Units Sold"
+            value={stats.total_units.toLocaleString()}
+          />
           <SummaryCard
             title="Total Amount"
-            value="₹89,000"
-            subtext="(19 SRs)"
+            value={`₹${stats.total_amount.toLocaleString()}`}
           />
           <SummaryCard
             title="Total Discount"
-            value="₹15,000"
-            subtext="(45 SRs)"
+            value={`₹${stats.total_discount.toLocaleString()}`}
           />
         </section>
 
