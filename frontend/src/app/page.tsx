@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 
-import FilterDropdown from "@/components/FilterDropdown";
-import SearchBar from "@/components/SearchBar";
-import SortingDropdown from "@/components/SortingDropdown";
-import TransactionTable from "@/components/TransactionTable";
-import Pagination from "@/components/Pagination";
-import SummaryCard from "@/components/SummaryCard";
-import Loader from "@/components/Loader";
+import FilterDropdown from "@/src/components/FilterDropdown";
+import SearchBar from "@/src/components/SearchBar";
+import SortingDropdown from "@/src/components/SortingDropdown";
+import TransactionTable from "@/src/components/TransactionTable";
+import Pagination from "@/src/components/Pagination";
+import SummaryCard from "@/src/components/SummaryCard";
+import Loader from "@/src/components/Loader";
 
 type FilterState = {
   region: string[];
