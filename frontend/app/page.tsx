@@ -18,6 +18,8 @@ type FilterState = {
   payment: string[];
   date: string;
   search: string;
+  sortBy: string;
+  sortOrder: "asc" | "desc";
 };
 
 export default function Home() {
@@ -46,11 +48,26 @@ export default function Home() {
     payment: [],
     date: "",
     search: "",
+    sortBy: "",
+    sortOrder: "asc",
   });
 
   const [transactions, setTransactions] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
+
+  const handleSort = (field: string) => {
+    if (!field) {
+      updateFilter("sortBy", "");
+      updateFilter("sortOrder", "asc");
+      return;
+    }
+
+    const newOrder: "asc" | "desc" =
+      filters.sortBy === field && filters.sortOrder === "asc" ? "desc" : "asc";
+    updateFilter("sortBy", field);
+    updateFilter("sortOrder", newOrder);
+  };
 
   const fetchTransactions = async (page = 1) => {
     try {
@@ -79,6 +96,8 @@ export default function Home() {
       if (filters.date) params.append("date", filters.date);
 
       if (filters.search) params.append("search", filters.search);
+      if (filters.sortBy) params.append("sortBy", filters.sortBy);
+      if (filters.sortOrder) params.append("sortOrder", filters.sortOrder);
 
       const res = await fetch(`${API}/api/transactions?${params.toString()}`);
 
@@ -172,11 +191,14 @@ export default function Home() {
 
             <SortingDropdown
               options={[
-                { label: "Customer Name (A–Z)", value: "name_asc" },
-                { label: "Date (Newest)", value: "date_desc" },
-                { label: "Quantity", value: "qty" },
+                { label: "Customer Name", value: "customer_name" },
+                { label: "Date", value: "date" },
+                { label: "Quantity", value: "quantity" },
+                { label: "None", value: "" },
               ]}
-              onChange={(value) => console.log("Sort:", value)}
+              sortBy={filters.sortBy}
+              sortOrder={filters.sortOrder}
+              onChange={handleSort}
             />
           </div>
         </section>

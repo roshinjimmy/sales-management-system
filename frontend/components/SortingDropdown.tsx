@@ -1,20 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface SortingDropdownProps {
   label?: string;
   options: { label: string; value: string }[];
   onChange?: (value: string) => void;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }
 
 export default function SortingDropdown({
   label = "Sort By",
   options,
   onChange,
+  sortBy,
+  sortOrder,
 }: SortingDropdownProps) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string>("");
+
+  useEffect(() => {
+    setSelected(sortBy || "");
+  }, [sortBy]);
 
   const handleSelect = (value: string) => {
     setSelected(value);
@@ -22,8 +30,14 @@ export default function SortingDropdown({
     setOpen(false);
   };
 
-  const selectedLabel =
-    options.find((o) => o.value === selected)?.label ?? "Select";
+  let selectedLabel = "None";
+
+  if (sortBy) {
+    const found = options.find((o) => o.value === sortBy);
+    if (found) {
+      selectedLabel = found.label + (sortOrder === "asc" ? " ↑" : " ↓");
+    }
+  }
 
   return (
     <div className="relative inline-block text-left">

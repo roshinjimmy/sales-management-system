@@ -68,7 +68,7 @@ exports.getTransactions = async (req, res) => {
       conditions.push(`EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM NOW())`);
     }
 
-    if (search && search.trim() !== "") {
+    if (search?.trim()) {
       conditions.push(`
         (
           transaction_id ILIKE $${paramIndex} OR
@@ -85,6 +85,20 @@ exports.getTransactions = async (req, res) => {
       paramIndex++;
     }
 
+    let sortBy = req.query.sortBy || "id";
+    let sortOrder = req.query.sortOrder === "desc" ? "DESC" : "ASC";
+
+    const sortableColumns = {
+      customer_name: "LOWER(customer_name)",
+      date: "date",
+      quantity: "quantity::int",
+      total_amount: "total_amount::numeric",
+      transaction_id: "transaction_id::bigint",
+      id: "id",
+    };
+
+    const sortColumn = sortableColumns[sortBy] || "id";
+
     const whereClause =
       conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
@@ -95,7 +109,7 @@ exports.getTransactions = async (req, res) => {
       SELECT *
       FROM transactions
       ${whereClause}
-      ORDER BY transaction_id::bigint ASC
+      ORDER BY ${sortColumn} ${sortOrder}
       LIMIT $${limitParam} OFFSET $${offsetParam}
     `;
 
@@ -122,10 +136,12 @@ exports.getTransactions = async (req, res) => {
     const countParams = params.slice(0, params.length - 2);
 
     const countQuery = `SELECT COUNT(*) FROM transactions ${whereClause}`;
-    const countResult = await pool.query(countQuery, countParams);
-    const totalRows = parseInt(countResult.rows[0].count);
+    const totalRows = (await pool.query(countQuery, countParams)).rows[0].count;
 
-    res.json({ data: mapped, totalPages: Math.ceil(totalRows / limit) });
+    res.json({
+      data: mapped,
+      totalPages: Math.ceil(totalRows / limit),
+    });
   } catch (err) {
     console.error("Query error:", err);
     res.status(500).json({ error: "Server error" });
