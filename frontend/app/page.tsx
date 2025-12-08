@@ -8,6 +8,7 @@ import SortingDropdown from "@/components/SortingDropdown";
 import TransactionTable from "@/components/TransactionTable";
 import Pagination from "@/components/Pagination";
 import SummaryCard from "@/components/SummaryCard";
+import Loader from "@/components/Loader";
 
 type FilterState = {
   region: string[];
@@ -52,6 +53,7 @@ export default function Home() {
     sortOrder: "asc",
   });
 
+  const [loading, setLoading] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
@@ -77,6 +79,7 @@ export default function Home() {
 
   const fetchTransactions = async (page = 1) => {
     try {
+      setLoading(true);
       const API = process.env.NEXT_PUBLIC_API_URL;
 
       const params = new URLSearchParams();
@@ -112,6 +115,8 @@ export default function Home() {
       setTotalPages(json.totalPages || 1);
     } catch (err) {
       console.error("Fetch error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -262,7 +267,11 @@ export default function Home() {
           />
         </section>
 
-        <TransactionTable columns={columns} data={transactions} />
+        {loading ? (
+          <Loader />
+        ) : (
+          <TransactionTable columns={columns} data={transactions} />
+        )}
 
         <Pagination
           currentPage={page}
