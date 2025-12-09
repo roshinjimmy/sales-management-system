@@ -242,7 +242,7 @@ export default function Home() {
     <main className="min-h-screen w-full bg-white text-black">
       <div className="flex h-screen w-full gap-0">
         <Sidebar />
-        <div className="flex-1 px-5 py-2 flex flex-col gap-6 overflow-hidden">
+        <div className="flex-1 px-5 py-2 flex flex-col gap-3 overflow-hidden">
           <header className="mb-0 flex items-center justify-between gap-4 pr-2">
             <h1 className="text-l font-semibold text-gray-800">
               Sales Management System
@@ -372,11 +372,13 @@ export default function Home() {
             />
           </section>
 
-          {loading ? (
-            <Loader />
-          ) : (
-            <TransactionTable columns={columns} data={transactions} />
-          )}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {loading ? (
+              <Loader />
+            ) : (
+              <TransactionTable columns={columns} data={transactions} />
+            )}
+          </div>
 
           <Pagination
             currentPage={page}
