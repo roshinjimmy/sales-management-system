@@ -176,6 +176,22 @@ export default function Home() {
     setPage(1);
   };
 
+  const resetFilters = () => {
+    setFilters({
+      region: [],
+      gender: [],
+      ageRange: "",
+      category: [],
+      tags: [],
+      payment: [],
+      date: "",
+      search: "",
+      sortBy: "",
+      sortOrder: "asc",
+    });
+    setPage(1);
+  };
+
   useEffect(() => {
     fetchTransactions(page);
   }, [page, filters]);
@@ -205,6 +221,24 @@ export default function Home() {
           <section className="w-full flex flex-col gap-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex flex-wrap gap-1.5">
+                <button
+                  onClick={resetFilters}
+                  className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                  title="Reset all filters"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-4 h-4"
+                  >
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                  </svg>
+                </button>
                 <FilterDropdown
                   label="Customer Region"
                   options={["North", "South", "East", "West"]}
