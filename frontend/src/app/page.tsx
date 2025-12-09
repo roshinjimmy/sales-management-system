@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import FilterDropdown from "@/src/components/FilterDropdown";
 import SearchBar from "@/src/components/SearchBar";
@@ -25,6 +26,9 @@ type FilterState = {
 };
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const columns = [
     { key: "transactionId", label: "Transaction ID" },
     { key: "date", label: "Date" },
@@ -41,23 +45,24 @@ export default function Home() {
     { key: "employee", label: "Employee Name" },
   ] as const;
 
+  // Initialize filters from URL params
   const [filters, setFilters] = useState<FilterState>({
-    region: [],
-    gender: [],
-    ageRange: "",
-    category: [],
-    tags: [],
-    payment: [],
-    date: "",
-    search: "",
-    sortBy: "",
-    sortOrder: "asc",
+    region: searchParams.get("region")?.split(",").filter(Boolean) || [],
+    gender: searchParams.get("gender")?.split(",").filter(Boolean) || [],
+    ageRange: searchParams.get("ageRange") || "",
+    category: searchParams.get("category")?.split(",").filter(Boolean) || [],
+    tags: searchParams.get("tags")?.split(",").filter(Boolean) || [],
+    payment: searchParams.get("payment")?.split(",").filter(Boolean) || [],
+    date: searchParams.get("date") || "",
+    search: searchParams.get("search") || "",
+    sortBy: searchParams.get("sortBy") || "",
+    sortOrder: (searchParams.get("sortOrder") as "asc" | "desc") || "asc",
   });
 
   const [loading, setLoading] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(parseInt(searchParams.get("page") || "1"));
 
   const [stats, setStats] = useState({
     total_units: 0,
@@ -160,6 +165,30 @@ export default function Home() {
     }
   };
 
+  const updateURL = (newFilters: FilterState, newPage: number) => {
+    const params = new URLSearchParams();
+
+    if (newPage > 1) params.set("page", String(newPage));
+    if (newFilters.region.length)
+      params.set("region", newFilters.region.join(","));
+    if (newFilters.gender.length)
+      params.set("gender", newFilters.gender.join(","));
+    if (newFilters.ageRange) params.set("ageRange", newFilters.ageRange);
+    if (newFilters.category.length)
+      params.set("category", newFilters.category.join(","));
+    if (newFilters.tags.length) params.set("tags", newFilters.tags.join(","));
+    if (newFilters.payment.length)
+      params.set("payment", newFilters.payment.join(","));
+    if (newFilters.date) params.set("date", newFilters.date);
+    if (newFilters.search) params.set("search", newFilters.search);
+    if (newFilters.sortBy) params.set("sortBy", newFilters.sortBy);
+    if (newFilters.sortBy && newFilters.sortOrder)
+      params.set("sortOrder", newFilters.sortOrder);
+
+    const queryString = params.toString();
+    router.push(queryString ? `?${queryString}` : "/", { scroll: false });
+  };
+
   const updateFilter = (
     key: keyof FilterState,
     value: FilterState[keyof FilterState]
@@ -168,16 +197,18 @@ export default function Home() {
       return;
     }
 
-    setFilters((prev) => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       [key]: value,
-    }));
+    };
 
+    setFilters(newFilters);
     setPage(1);
+    updateURL(newFilters, 1);
   };
 
   const resetFilters = () => {
-    setFilters({
+    const newFilters = {
       region: [],
       gender: [],
       ageRange: "",
@@ -187,9 +218,11 @@ export default function Home() {
       date: "",
       search: "",
       sortBy: "",
-      sortOrder: "asc",
-    });
+      sortOrder: "asc" as "asc" | "desc",
+    };
+    setFilters(newFilters);
     setPage(1);
+    updateURL(newFilters, 1);
   };
 
   useEffect(() => {
@@ -199,6 +232,11 @@ export default function Home() {
   useEffect(() => {
     fetchStats();
   }, [filters]);
+
+  // Update URL when page changes
+  useEffect(() => {
+    updateURL(filters, page);
+  }, [page]);
 
   return (
     <main className="min-h-screen w-full bg-white text-black">
@@ -211,6 +249,7 @@ export default function Home() {
             </h1>
             <div className="w-full max-w-md flex justify-end">
               <SearchBar
+                initialValue={filters.search}
                 onSearch={(value) => {
                   updateFilter("search", value);
                 }}
@@ -243,12 +282,14 @@ export default function Home() {
                   label="Customer Region"
                   options={["North", "South", "East", "West"]}
                   multi={true}
+                  value={filters.region}
                   onChange={(values) => updateFilter("region", values)}
                 />
                 <FilterDropdown
                   label="Gender"
                   options={["Male", "Female", "Other"]}
                   multi={false}
+                  value={filters.gender[0] || ""}
                   onChange={(value) =>
                     updateFilter("gender", value ? [value as string] : [])
                   }
@@ -257,6 +298,7 @@ export default function Home() {
                   label="Age Range"
                   options={["18-25", "26-35", "36-45", "46-60", "60+"]}
                   multi={false}
+                  value={filters.ageRange}
                   onChange={(value) => updateFilter("ageRange", value)}
                 />
                 <FilterDropdown
@@ -268,18 +310,21 @@ export default function Home() {
                     "Accessories",
                   ]}
                   multi={true}
+                  value={filters.category}
                   onChange={(values) => updateFilter("category", values)}
                 />
                 <FilterDropdown
                   label="Tags"
                   options={["New", "Sale", "Popular", "Limited"]}
                   multi={true}
+                  value={filters.tags}
                   onChange={(values) => updateFilter("tags", values)}
                 />
                 <FilterDropdown
                   label="Payment Method"
                   options={["Cash", "Credit Card", "UPI", "Net Banking"]}
                   multi={true}
+                  value={filters.payment}
                   onChange={(values) => updateFilter("payment", values)}
                 />
                 <FilterDropdown
@@ -291,6 +336,7 @@ export default function Home() {
                     "This Year",
                   ]}
                   multi={false}
+                  value={filters.date}
                   onChange={(value) => updateFilter("date", value)}
                 />
               </div>

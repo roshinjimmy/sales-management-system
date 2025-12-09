@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface FilterDropdownProps {
   label: string;
   options: string[];
   multi?: boolean;
   onChange?: (selected: string[] | string) => void;
+  value?: string[] | string;
 }
 
 export default function FilterDropdown({
@@ -14,9 +15,16 @@ export default function FilterDropdown({
   options,
   multi = false,
   onChange,
+  value,
 }: FilterDropdownProps) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setSelected(Array.isArray(value) ? value : value ? [value] : []);
+    }
+  }, [value]);
 
   const toggleOption = (option: string) => {
     if (multi) {

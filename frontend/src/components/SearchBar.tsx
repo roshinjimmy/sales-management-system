@@ -5,10 +5,19 @@ import { useState, useEffect } from "react";
 interface SearchBarProps {
   onSearch: (value: string) => void;
   delay?: number;
+  initialValue?: string;
 }
 
-export default function SearchBar({ onSearch, delay = 400 }: SearchBarProps) {
-  const [inputValue, setInputValue] = useState("");
+export default function SearchBar({
+  onSearch,
+  delay = 400,
+  initialValue = "",
+}: SearchBarProps) {
+  const [inputValue, setInputValue] = useState(initialValue);
+
+  useEffect(() => {
+    setInputValue(initialValue);
+  }, [initialValue]);
 
   useEffect(() => {
     if (inputValue === "") {
