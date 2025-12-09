@@ -16,14 +16,14 @@ export default function TransactionTable({
   data,
 }: TransactionTableProps) {
   return (
-    <div className="bg-white rounded-md shadow overflow-x-auto w-full">
-      <table className="min-w-[1500px] w-full text-left text-sm">
-        <thead className="sticky top-0 bg-gray-50 z-10">
-          <tr className="border-b bg-gray-50">
+    <div className="w-full overflow-x-auto rounded-md border border-gray-200 bg-white">
+      <table className="w-full min-w-[1500px] text-left text-sm">
+        <thead className="sticky top-0 z-10 bg-gray-50">
+          <tr className="border-b border-gray-200 bg-gray-50">
             {columns.map((col) => (
               <th
                 key={col.key}
-                className="py-3 px-3 font-medium text-gray-700 whitespace-nowrap"
+                className="px-3 py-2 text-xs font-medium tracking-wide text-gray-600 whitespace-nowrap"
               >
                 {col.label}
               </th>
@@ -36,7 +36,7 @@ export default function TransactionTable({
             <tr>
               <td
                 colSpan={columns.length}
-                className="py-4 text-center text-gray-500"
+                className="py-4 text-center text-sm text-gray-500"
               >
                 No Records Found
               </td>
@@ -45,14 +45,12 @@ export default function TransactionTable({
             data.map((row, idx) => (
               <tr
                 key={idx}
-                className={`border-b hover:bg-gray-100 transition ${
-                  idx % 2 === 0 ? "bg-white" : "bg-gray-50"
-                }`}
+                className="border-b border-gray-100 bg-white text-[13px] text-gray-800 hover:bg-gray-50"
               >
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={`py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px] ${
+                    className={`px-3 py-2 max-w-[180px] whitespace-nowrap overflow-hidden text-ellipsis ${
                       col.align === "right" ? "text-right" : "text-left"
                     }`}
                     title={row[col.key]}

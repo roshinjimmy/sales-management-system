@@ -29,14 +29,14 @@ export default function Pagination({
   }
 
   return (
-    <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
+    <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5 text-xs text-gray-700">
       <button
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
-        className={`px-3 py-1 rounded-md border ${
+        className={`rounded-md px-2.5 py-1 border ${
           currentPage === 1
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : "bg-white hover:bg-gray-50"
+            ? "cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300"
+            : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
         }`}
       >
         Prev
@@ -46,11 +46,11 @@ export default function Pagination({
         <>
           <button
             onClick={() => onPageChange(1)}
-            className="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300"
+            className="rounded-md border border-gray-200 bg-white px-2.5 py-1 hover:bg-gray-50"
           >
             1
           </button>
-          <span className="px-2">...</span>
+          <span className="px-1 text-gray-400">...</span>
         </>
       )}
 
@@ -58,10 +58,10 @@ export default function Pagination({
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`px-3 py-1 rounded-md text-sm ${
+          className={`rounded-md px-2.5 py-1 text-xs font-medium ${
             page === currentPage
-              ? "bg-black text-white"
-              : "bg-gray-200 hover:bg-gray-300"
+              ? "bg-gray-900 text-white"
+              : "border border-gray-200 bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
         >
           {page}
@@ -70,10 +70,10 @@ export default function Pagination({
 
       {end < totalPages && (
         <>
-          <span className="px-2">...</span>
+          <span className="px-1 text-gray-400">...</span>
           <button
             onClick={() => onPageChange(totalPages)}
-            className="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300"
+            className="rounded-md border border-gray-200 bg-white px-2.5 py-1 hover:bg-gray-50"
           >
             {totalPages}
           </button>
@@ -83,10 +83,10 @@ export default function Pagination({
       <button
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
-        className={`px-3 py-1 rounded-md border ${
+        className={`rounded-md px-2.5 py-1 border ${
           currentPage === totalPages
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : "bg-white hover:bg-gray-50"
+            ? "cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300"
+            : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
         }`}
       >
         Next

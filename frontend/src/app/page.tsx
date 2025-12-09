@@ -178,8 +178,11 @@ export default function Home() {
 
   useEffect(() => {
     fetchTransactions(page);
-    fetchStats();
   }, [page, filters]);
+
+  useEffect(() => {
+    fetchStats();
+  }, [filters]);
 
   return (
     <main className="min-h-screen w-full bg-white text-black">
@@ -200,96 +203,106 @@ export default function Home() {
           </header>
 
           <section className="w-full flex flex-col gap-2">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap gap-1.5">
-            <FilterDropdown
-              label="Customer Region"
-              options={["North", "South", "East", "West"]}
-              multi={true}
-              onChange={(values) => updateFilter("region", values)}
-            />
-            <FilterDropdown
-              label="Gender"
-              options={["Male", "Female", "Other"]}
-              multi={false}
-              onChange={(value) =>
-                updateFilter("gender", value ? [value as string] : [])
-              }
-            />
-            <FilterDropdown
-              label="Age Range"
-              options={["18-25", "26-35", "36-45", "46-60", "60+"]}
-              multi={false}
-              onChange={(value) => updateFilter("ageRange", value)}
-            />
-            <FilterDropdown
-              label="Product Category"
-              options={["Electronics", "Clothing", "Groceries", "Accessories"]}
-              multi={true}
-              onChange={(values) => updateFilter("category", values)}
-            />
-            <FilterDropdown
-              label="Tags"
-              options={["New", "Sale", "Popular", "Limited"]}
-              multi={true}
-              onChange={(values) => updateFilter("tags", values)}
-            />
-            <FilterDropdown
-              label="Payment Method"
-              options={["Cash", "Credit Card", "UPI", "Net Banking"]}
-              multi={true}
-              onChange={(values) => updateFilter("payment", values)}
-            />
-            <FilterDropdown
-              label="Date"
-              options={["Today", "Last 7 Days", "Last 30 Days", "This Year"]}
-              multi={false}
-              onChange={(value) => updateFilter("date", value)}
-            />
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap gap-1.5">
+                <FilterDropdown
+                  label="Customer Region"
+                  options={["North", "South", "East", "West"]}
+                  multi={true}
+                  onChange={(values) => updateFilter("region", values)}
+                />
+                <FilterDropdown
+                  label="Gender"
+                  options={["Male", "Female", "Other"]}
+                  multi={false}
+                  onChange={(value) =>
+                    updateFilter("gender", value ? [value as string] : [])
+                  }
+                />
+                <FilterDropdown
+                  label="Age Range"
+                  options={["18-25", "26-35", "36-45", "46-60", "60+"]}
+                  multi={false}
+                  onChange={(value) => updateFilter("ageRange", value)}
+                />
+                <FilterDropdown
+                  label="Product Category"
+                  options={[
+                    "Electronics",
+                    "Clothing",
+                    "Groceries",
+                    "Accessories",
+                  ]}
+                  multi={true}
+                  onChange={(values) => updateFilter("category", values)}
+                />
+                <FilterDropdown
+                  label="Tags"
+                  options={["New", "Sale", "Popular", "Limited"]}
+                  multi={true}
+                  onChange={(values) => updateFilter("tags", values)}
+                />
+                <FilterDropdown
+                  label="Payment Method"
+                  options={["Cash", "Credit Card", "UPI", "Net Banking"]}
+                  multi={true}
+                  onChange={(values) => updateFilter("payment", values)}
+                />
+                <FilterDropdown
+                  label="Date"
+                  options={[
+                    "Today",
+                    "Last 7 Days",
+                    "Last 30 Days",
+                    "This Year",
+                  ]}
+                  multi={false}
+                  onChange={(value) => updateFilter("date", value)}
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <SortingDropdown
+                  options={[
+                    { label: "Customer Name", value: "customer_name" },
+                    { label: "Date", value: "date" },
+                    { label: "Quantity", value: "quantity" },
+                    { label: "None", value: "" },
+                  ]}
+                  sortBy={filters.sortBy}
+                  sortOrder={filters.sortOrder}
+                  onChange={handleSort}
+                />
+              </div>
             </div>
+          </section>
 
-            <div className="flex items-center gap-2">
-              <SortingDropdown
-              options={[
-                { label: "Customer Name", value: "customer_name" },
-                { label: "Date", value: "date" },
-                { label: "Quantity", value: "quantity" },
-                { label: "None", value: "" },
-              ]}
-              sortBy={filters.sortBy}
-              sortOrder={filters.sortOrder}
-              onChange={handleSort}
+          <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-fit">
+            <SummaryCard
+              title="Total Units Sold"
+              value={stats.total_units.toLocaleString()}
             />
-            </div>
-          </div>
-        </section>
+            <SummaryCard
+              title="Total Amount"
+              value={`₹${stats.total_amount.toLocaleString()}`}
+            />
+            <SummaryCard
+              title="Total Discount"
+              value={`₹${stats.total_discount.toLocaleString()}`}
+            />
+          </section>
 
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-fit">
-          <SummaryCard
-            title="Total Units Sold"
-            value={stats.total_units.toLocaleString()}
-          />
-          <SummaryCard
-            title="Total Amount"
-            value={`₹${stats.total_amount.toLocaleString()}`}
-          />
-          <SummaryCard
-            title="Total Discount"
-            value={`₹${stats.total_discount.toLocaleString()}`}
-          />
-        </section>
+          {loading ? (
+            <Loader />
+          ) : (
+            <TransactionTable columns={columns} data={transactions} />
+          )}
 
-        {loading ? (
-          <Loader />
-        ) : (
-          <TransactionTable columns={columns} data={transactions} />
-        )}
-
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={(p) => setPage(p)}
-        />
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={(p) => setPage(p)}
+          />
         </div>
       </div>
     </main>

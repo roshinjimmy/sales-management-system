@@ -25,7 +25,7 @@ export default function SearchBar({ onSearch, delay = 400 }: SearchBarProps) {
   }, [inputValue]);
 
   return (
-    <div className="flex items-center bg-gray-150 border border-gray-300 rounded-md px-4 py-2 w-80 gap-3">
+    <div className="flex items-center bg-gray-150 border border-gray-300 rounded-md px-3 py-1 w-80 gap-3">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-4 w-4 text-gray-500"
