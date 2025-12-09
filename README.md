@@ -1,5 +1,10 @@
 # Sales Management System
 
+## Live Demo
+
+- **Frontend**: [https://sales-management-system-rj.vercel.app/](https://sales-management-system-rj.vercel.app/)
+- **Backend API**: [https://sales-management-system-5bz9.onrender.com](https://sales-management-system-5bz9.onrender.com)
+
 ## Overview
 
 A full-stack web application for managing and analyzing sales transactions. The system provides comprehensive filtering, searching, sorting, and pagination capabilities for transaction data. Built with a Next.js frontend and Node.js/Express backend with PostgreSQL database, it enables users to efficiently browse through large datasets and gain insights through real-time statistics.
