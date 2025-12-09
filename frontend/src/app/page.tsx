@@ -106,8 +106,10 @@ export default function Home() {
       if (filters.date) params.append("date", filters.date);
 
       if (filters.search) params.append("search", filters.search);
-      if (filters.sortBy) params.append("sortBy", filters.sortBy);
-      if (filters.sortOrder) params.append("sortOrder", filters.sortOrder);
+      if (filters.sortBy) {
+        params.append("sortBy", filters.sortBy);
+        params.append("sortOrder", filters.sortOrder);
+      }
 
       const res = await fetch(`${API}/api/transactions?${params.toString()}`);
 
@@ -162,16 +164,14 @@ export default function Home() {
     key: keyof FilterState,
     value: FilterState[keyof FilterState]
   ) => {
-    setFilters((prev) => {
-      if (JSON.stringify(prev[key]) === JSON.stringify(value)) {
-        return prev;
-      }
+    if (JSON.stringify(filters[key]) === JSON.stringify(value)) {
+      return;
+    }
 
-      return {
-        ...prev,
-        [key]: value,
-      };
-    });
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
 
     setPage(1);
   };
